@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz 2º Aniversario!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4b72;
+            --secondary: #ff85a2;
+            --accent: #ffd1dc;
+            --dark: #2c1820;
+            --light: #fffafb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a0b16 0%, #36122b 50%, #1a0b16 100%);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Canvas de Fondo con Corazones */
+        #heartCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Contenedor Principal */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 1.5s ease;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.8rem;
+            color: var(--secondary);
+            text-shadow: 0 0 20px rgba(255, 133, 162, 0.5);
+            margin-bottom: 10px;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: var(--accent);
+            letter-spacing: 2px;
+        }
+
+        /* Contador de Tiempo */
+        .timer-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 60px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 2s ease;
+        }
+
+        .timer-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+
+        .timer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+        }
+
+        .time-box {
+            background: rgba(255, 75, 114, 0.15);
+            padding: 15px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 75, 114, 0.3);
+        }
+
+        .time-box span {
+            display: block;
+        }
+
+        .number {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .label {
+            font-size: 0.85rem;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        /* Galería Polaroid */
+        .gallery-title {
+            text-align: center;
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.8rem;
+            color: var(--secondary);
+            margin-bottom: 40px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .polaroid {
+            background: #fff;
+            padding: 15px 15px 25px 15px;
+            border-radius: 4px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            transform: rotate(calc(var(--r, 0) * 1deg));
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .polaroid:hover {
+            transform: scale(1.08) rotate(0deg) !important;
+            z-index: 10;
+            box-shadow: 0 20px 35px rgba(255, 75, 114, 0.4);
+        }
+
+        .polaroid-img-container {
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+            border-radius: 2px;
+            background-color: #eee;
+        }
+
+        .polaroid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .polaroid:hover img {
+            transform: scale(1.05);
+        }
+
+        .caption {
+            font-family: 'Dancing Script', cursive;
+            color: var(--dark);
+            font-size: 1.4rem;
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 700;
+        }
+
+        /* Sección Carta Interactiva */
+        .letter-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .letter-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 75, 114, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        .letter-btn:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(255, 75, 114, 0.6);
+        }
+
+        .letter-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 1s ease-in-out, opacity 0.8s ease;
+            opacity: 0;
+            text-align: left;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--accent);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0 25px;
+            border-radius: 12px;
+        }
+
+        .letter-content.open {
+            max-height: 1000px;
+            opacity: 1;
+            padding: 25px;
+        }
+
+        /* Modal para ver fotos ampliadas */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            padding: 20px;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 85vh;
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(255, 133, 162, 0.5);
+            object-fit: contain;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--secondary);
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.6rem;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2.8rem; }
+            .gallery-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="heartCanvas"></canvas>
+
+    <div class="container">
+        <header>
+            <h1>Nuestros 2 Años Juntos 💕</h1>
+            <p class="subtitle">CELEBRANDO CADA SEGUNDO A TU LADO</p>
+        </header>
+
+        <!-- Contador -->
+        <div class="timer-container">
+            <div class="timer-title">Construyendo nuestra historia desde hace:</div>
+            <div class="timer-grid">
+                <div class="time-box"><span class="number" id="days">0</span><span class="label">Días</span></div>
+                <div class="time-box"><span class="number" id="hours">0</span><span class="label">Horas</span></div>
+                <div class="time-box"><span class="number" id="minutes">0</span><span class="label">Minutos</span></div>
+                <div class="time-box"><span class="number" id="seconds">0</span><span class="label">Segundos</span></div>
+            </div>
+        </div>
+
+        <!-- Galería de Recuerdos -->
+        <h2 class="gallery-title">Nuestra Galería de Recuerdos 📸</h2>
+        <div class="gallery-grid" id="galleryGrid"></div>
+
+        <!-- Carta Especial -->
+        <div class="letter-section">
+            <button class="letter-btn" onclick="toggleLetter()">✉️ Abrir Carta de Aniversario</button>
+            <div class="letter-content" id="letterContent">
+                <p><strong>Mi amor,</strong></p><br>
+                <p>¡Felices 2 años! Parece que fue ayer cuando empezamos este hermoso camino juntos, y al mismo tiempo siento que te conozco de toda la vida.</p><br>
+                <p>Cada momento compartido, cada sonrisa, cada abrazo y cada meta cumplida a tu lado ha hecho que estos dos años sean los más felices y especiales de mi vida. Gracias por ser mi apoyo incondicional, mi compañía favorita y el amor de mi vida.</p><br>
+                <p>A pesar de todos los momentos dificiles gracias por seguir eligiendo nuestro amor.
+                    Pase toda la noche haciendo esta carta, este es mi regalo.
+                </p><br>
+                <p><strong>Te amo con todo mi corazón, te amo siempre mi zanahoria ❤️</strong></p>
+            </div>
+        </div>
+
+        <footer>
+            Por muchos años más juntos ✨
+        </footer>
+    </div>
+
+    <!-- Modal de Imagen -->
+    <div class="modal" id="imageModal" onclick="closeModal()">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImg">
+    </div>
+
+    <script>
+        /* === 1. CONTADOR DE TIEMPO (27 DE SEPTIEMBRE DE 2024) === */
+        const startDate = new Date(2024, 8, 27); 
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startDate;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('days').innerText = days;
+            document.getElementById('hours').innerText = hours;
+            document.getElementById('minutes').innerText = minutes;
+            document.getElementById('seconds').innerText = seconds;
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        /* === 2. RUTAS DE TUS IMÁGENES DENTRO DE LA CARPETA img/ === */
+        const photos = [
+            { url: 'img/foto1.jpg', caption: 'Amo dormir juntos 💕' },
+            { url: 'img/foto2.jpg', caption: 'Nuestra noche especial ✨' },
+            { url: 'img/foto3.jpg', caption: 'Con nuestra romanticadosa 🐶' },
+            { url: 'img/foto4.jpg', caption: 'Atardecer inolvidable 🌅' },
+            { url: 'img/foto5.jpg', caption: 'Momentos de promesa 💍' },
+            { url: 'img/foto6.jpg', caption: 'Nuestra felicidad y risas 🤪' },
+            { url: 'img/foto7.jpg', caption: 'Nuestro primer beso 🥰' },
+            { url: 'img/foto8.jpg', caption: 'Por nuestra ciudad Favorita 💋' },
+            { url: 'img/foto9.jpg', caption: 'Miradas que lo dicen todo ✨' },
+            { url: 'img/foto10.jpg', caption: 'Siempre Orgulloso de vos 🎓' }
+        ];
+
+        const galleryGrid = document.getElementById('galleryGrid');
+
+        photos.forEach((photo) => {
+            const randomRotation = (Math.random() * 12 - 6).toFixed(1);
+            const card = document.createElement('div');
+            card.className = 'polaroid';
+            card.style.setProperty('--r', randomRotation);
+            card.onclick = () => openModal(photo.url);
+
+            card.innerHTML = `
+                <div class="polaroid-img-container">
+                    <img src="${photo.url}" alt="${photo.caption}">
+                </div>
+                <div class="caption">${photo.caption}</div>
+            `;
+            galleryGrid.appendChild(card);
+        });
+
+        /* === 3. CARTA INTERACTIVA === */
+        function toggleLetter() {
+            const letter = document.getElementById('letterContent');
+            letter.classList.toggle('open');
+        }
+
+        /* === 4. MODAL DE VISUALIZACIÓN === */
+        function openModal(url) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            modal.style.display = 'flex';
+            modalImg.src = url;
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        /* === 5. ANIMACIÓN DE CORAZONES (CANVAS) === */
+        const canvas = document.getElementById('heartCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Heart {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + 20;
+                this.size = Math.random() * 15 + 8;
+                this.speedY = Math.random() * 1.5 + 0.5;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.opacity = Math.random() * 0.7 + 0.3;
+            }
+
+            update() {
+                this.y -= this.speedY;
+                this.x += this.speedX;
+                if (this.y < -20) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = '#ff4b72';
+                ctx.beginPath();
+                const topCurveHeight = this.size * 0.3;
+                ctx.moveTo(this.x, this.y + topCurveHeight);
+                ctx.bezierCurveTo(
+                    this.x, this.y, 
+                    this.x - this.size / 2, this.y, 
+                    this.x - this.size / 2, this.y + topCurveHeight
+                );
+                ctx.bezierCurveTo(
+                    this.x - this.size / 2, this.y + (this.size + topCurveHeight) / 2, 
+                    this.x, this.y + this.size, 
+                    this.x, this.y + this.size
+                );
+                ctx.bezierCurveTo(
+                    this.x, this.y + this.size, 
+                    this.x + this.size / 2, this.y + (this.size + topCurveHeight) / 2, 
+                    this.x + this.size / 2, this.y + topCurveHeight
+                );
+                ctx.bezierCurveTo(
+                    this.x + this.size / 2, this.y, 
+                    this.x, this.y, 
+                    this.x, this.y + topCurveHeight
+                );
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        const hearts = Array.from({ length: 35 }, () => new Heart());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hearts.forEach(heart => {
+                heart.update();
+                heart.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
